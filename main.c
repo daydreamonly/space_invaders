@@ -81,7 +81,7 @@ int main(void) {
     const int screenHeight = 400;
     //const char *text = "Welcome Invader";
     float shootTimer = 0;
-    Bullet bullets[100] = {0};
+    Bullet bullets[10] = {0};
     Foe foes[60];
 
     init_foes(foes, sizeof(foes) / sizeof(foes[0]), (Vector2){screenWidth, screenHeight}, 20, 15);
@@ -117,7 +117,7 @@ int main(void) {
 
         shootTimer += GetFrameTime();
 
-        if (shootTimer > 0.1) {
+        if (shootTimer > 0.5) {
             for (int i = 0; i < sizeof(bullets) / sizeof(bullets[0]); i++) {
                 if (bullets[i].active == 0) {
                     bullets[i].position.x = player.position.x + player.size.x / 2 - bullets[i].size.x / 2;
@@ -134,21 +134,22 @@ int main(void) {
         }
 
         for (int i = 0; i < sizeof(bullets) / sizeof(bullets[0]); i++) {
-            if (bullets[i].active == 1) {
-
-                if (bullets[i].position.y > 0) {
-                    bullets[i].position.y -= bullets[i].velocity;
+            Bullet *current_bullet = &bullets[i];
+            if (current_bullet->active == 1) {
+                if (current_bullet->position.y > 0) {
+                    current_bullet->position.y -= current_bullet->velocity;
                 } else {
-                    bullets[i].active = 0;
+                    current_bullet->active = 0;
                 }
-                
-                
-                //int isHit = CheckCollisionRecs(RectangleFromVector2(bullets[i].position, bullets[i].size), RectangleFromVector2(foes[i].position, target1.size));
-                
-                //if(isHit && foes[i].health != 0){
-                    //foes[i].health -= bullets[i].damage;
-                    //bullets[i].active = 0;
-                //}
+
+                for (int j = 0; j < sizeof(foes) / sizeof(foes[0]); j++) {
+                    Foe *current_foe = &foes[j];
+                    int isHit = CheckCollisionRecs(RectangleFromVector2(current_bullet->position, current_bullet->size), RectangleFromVector2(current_foe->position, current_foe->size));
+                    if(isHit && current_foe->health != 0){
+                        current_foe->health -= current_bullet->damage;
+                        current_bullet->active = 0;
+                    }
+                }
             }
         }
         BeginDrawing();
@@ -159,7 +160,6 @@ int main(void) {
            
             for(int i = 0; i < sizeof(foes) / sizeof(foes[0]); i++) {
                 if(foes[i].health > 0) {
-                    //DrawRectangle(foes[i].position.x, foes[i].position.y, foes[i].size.x, ., Color color)
                     DrawRectangleV(foes[i].position, foes[i].size, RED);
                 }
             }
