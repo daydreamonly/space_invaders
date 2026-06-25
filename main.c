@@ -49,7 +49,7 @@ Rectangle RectangleFromVector2(Vector2 position, Vector2 size){
     return rect;
 };
 
-void init_foes(Foe* a, int len, Vector2 cords, int margin, int foes_in_row){
+void init_foes(Foe* arr, int len, Vector2 cords, int margin, int foes_in_row){
     int items_in_row;
     if(len-1 > foes_in_row){
         items_in_row = foes_in_row;
@@ -65,7 +65,7 @@ void init_foes(Foe* a, int len, Vector2 cords, int margin, int foes_in_row){
         if(i % foes_in_row == 0 && i != 0) {
             row += 1;
         }
-        a[i] = (Foe){
+        arr[i] = (Foe){
             .size.x = 20,
             .size.y = 20,
             .health = 20,
@@ -73,6 +73,14 @@ void init_foes(Foe* a, int len, Vector2 cords, int margin, int foes_in_row){
             .position.y = 40 * row,
             .velocity = 1
         };
+    }
+}
+
+void init_bullets(Bullet* arr, int len){
+    for (int i = 0; i < len; i++) {
+        arr[i].size = (Vector2){.x = 5, .y = 20};
+        arr[i].velocity = 5;
+        arr[i].damage = 5;
     }
 }
 
@@ -85,6 +93,7 @@ int main(void) {
     Foe foes[60];
 
     init_foes(foes, sizeof(foes) / sizeof(foes[0]), (Vector2){screenWidth, screenHeight}, 20, 15);
+    init_bullets(bullets, sizeof(bullets) / sizeof(bullets[0]));
 
     Player player = {
         .position = {.x = 0, .y = 0},
@@ -100,13 +109,13 @@ int main(void) {
     };
 
     InitWindow(screenWidth, screenHeight, "Space Invaders");
-    
+
     SetTargetFPS(60);
 
     player.position.x = screenWidth / 2.0f - player.size.x / 2.0f;
     player.position.y = screenHeight;
 
-    
+
 
     while(!WindowShouldClose()) {
         if (player.position.y > 350) {
@@ -122,14 +131,11 @@ int main(void) {
                 if (bullets[i].active == 0) {
                     bullets[i].position.x = player.position.x + player.size.x / 2 - bullets[i].size.x / 2;
                     bullets[i].position.y = player.position.y - 20;
-                    bullets[i].size = (Vector2){.x = 5, .y = 20};
-                    bullets[i].velocity = 5;
-                    bullets[i].damage = 5;
                     bullets[i].active = 1;
                     break;
                 }
             }
-            
+
             shootTimer = 0;
         }
 
@@ -153,22 +159,22 @@ int main(void) {
             }
         }
         BeginDrawing();
-            ClearBackground(RAYWHITE);
-            //DrawText(text, screenWidth / 2 - textWidth / 2, 200, 16, BLACK);
-            
-            DrawRectangle(player.position.x, player.position.y, player.size.x, player.size.y, BLUE);
-           
-            for(int i = 0; i < sizeof(foes) / sizeof(foes[0]); i++) {
-                if(foes[i].health > 0) {
-                    DrawRectangleV(foes[i].position, foes[i].size, RED);
-                }
-            }
+        ClearBackground(RAYWHITE);
+        //DrawText(text, screenWidth / 2 - textWidth / 2, 200, 16, BLACK);
 
-            for (int i = 0; i < sizeof(bullets) / sizeof(bullets[0]); i++) {
-                if (bullets[i].active == 1) {
-                    DrawRectangle(bullets[i].position.x, bullets[i].position.y, bullets[i].size.x, bullets[i].size.y, GREEN);
-                }
+        DrawRectangle(player.position.x, player.position.y, player.size.x, player.size.y, BLUE);
+
+        for(int i = 0; i < sizeof(foes) / sizeof(foes[0]); i++) {
+            if(foes[i].health > 0) {
+                DrawRectangleV(foes[i].position, foes[i].size, RED);
             }
+        }
+
+        for (int i = 0; i < sizeof(bullets) / sizeof(bullets[0]); i++) {
+            if (bullets[i].active == 1) {
+                DrawRectangle(bullets[i].position.x, bullets[i].position.y, bullets[i].size.x, bullets[i].size.y, GREEN);
+            }
+        }
 
         EndDrawing();
     }
