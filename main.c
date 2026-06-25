@@ -3,13 +3,13 @@
 typedef struct Player {
     Vector2 position;
     Vector2 size;
-    int velocity;
+    float velocity;
 }Player;
 
 typedef struct Bullet {
     Vector2 position;
     Vector2 size;
-    int velocity;
+    float velocity;
     int damage;
     int active;
 }Bullet;
@@ -17,7 +17,7 @@ typedef struct Bullet {
 typedef struct Foe {
     Vector2 position;
     Vector2 size;
-    int velocity;
+    float velocity;
     int health;
 }Foe;
 
@@ -71,7 +71,7 @@ void init_foes(Foe* arr, int len, Vector2 cords, int margin, int foes_in_row){
             .health = 20,
             .position.x = (foes_in_row + margin) * (i % foes_in_row) + centered,
             .position.y = 40 * row,
-            .velocity = 1
+            .velocity = 1.0
         };
     }
 }
@@ -79,7 +79,7 @@ void init_foes(Foe* arr, int len, Vector2 cords, int margin, int foes_in_row){
 void init_bullets(Bullet* arr, int len){
     for (int i = 0; i < len; i++) {
         arr[i].size = (Vector2){.x = 5, .y = 20};
-        arr[i].velocity = 5;
+        arr[i].velocity = 5.0;
         arr[i].damage = 5;
     }
 }
@@ -98,14 +98,7 @@ int main(void) {
     Player player = {
         .position = {.x = 0, .y = 0},
         .size = {.x = 20, .y = 20},
-        .velocity = 5
-    };
-
-    Foe target1 = {
-        .position = {.x = 400, .y = 200},
-        .size = {.x = 20, .y = 20},
-        .velocity = 2,
-        .health = 10
+        .velocity = 4.5
     };
 
     InitWindow(screenWidth, screenHeight, "Space Invaders");
